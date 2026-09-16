@@ -1,1 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ほいくのあき（仮）| 東京都 保育園空き状況</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EEF5F1;
+    --card: #FFFFFF;
+    --ink: #1F332E;
+    --ink-soft: #55685F;
+    --accent: #EAA23D;
+    --accent-deep: #C97F1F;
+    --line: #DCE7DF;
+    --ok: #3E8F63;
+    --ok-bg: #E4F3E9;
+    --full: #C96A52;
+    --none: #B8C4BD;
+    --none-bg: #F1F4F2;
+    --radius-card: 18px;
+    --radius-pill: 999px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif; -webkit-font-smoothing: antialiased;
+  }
+  .frame { max-width: 440px; margin: 0 auto; min-height: 100vh; background: var(--bg); position: relative; padding-bottom: 48px; }
+  .hero { padding: 28px 20px 20px; position: relative; overflow: hidden; }
+  .hero-sun { position: absolute; top: -30px; right: -30px; width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #F6C878, var(--accent) 70%); opacity: 0.9; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius-pill); padding: 5px 12px; font-size: 12px; color: var(--ink-soft); position: relative; z-index: 1; }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
+  h1.title { font-family: 'Zen Maru Gothic', sans-serif; font-weight: 900; font-size: 30px; line-height: 1.35;
+    margin: 16px 0 6px; position: relative; z-index: 1; }
+  .title small { display: block; font-size: 15px; font-weight: 500; color: var(--ink-soft); margin-top: 6px; }
+  .search-card { background: var(--card); border-radius: var(--radius-card); padding: 16px; margin-top: 18px;
+    box-shadow: 0 10px 24px -14px rgba(31, 51, 46, 0.25); position: relative; z-index: 1; }
+  .field-row { display: flex; gap: 10px; }
+  .field { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 11px; color: var(--ink-soft); font-weight: 500; }
+  .field select, .field input { font-family: inherit; font-size: 14px; padding: 10px 12px; border-radius: 10px;
+    border: 1px solid var(--line); background: #FBFCFB; color: var(--ink); width: 100%; }
+  .search-btn { margin-top: 12px; width: 100%; padding: 13px; border: none; border-radius: 12px; background: var(--ink);
+    color: #fff; font-family: 'Zen Maru Gothic', sans-serif; font-weight: 700; font-size: 15px; cursor: pointer; }
+  .section { padding: 24px 20px 0; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+  .section-head h2 { font-family: 'Zen Maru Gothic', sans-serif; font-size: 17px; margin: 0; }
+  .section-head .count { font-size: 12px; color: var(--ink-soft); }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; }
+  .chip { flex: none; padding: 7px 14px; border-radius: var(--radius-pill); border: 1px solid var(--line);
+    background: var(--card); font-size: 13px; color: var(--ink-soft); white-space: nowrap; cursor: pointer; }
+  .chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .facility { background: var(--card); border-radius: var(--radius-card); padding: 16px; margin-bottom: 12px;
+    border: 1px solid var(--line); cursor: pointer; }
+  .facility-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .facility-name { font-weight: 700; font-size: 15px; line-height: 1.4; }
+  .facility-meta { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+  .status-pill { flex: none; font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: var(--radius-pill); }
+  .status-pill.avail { background: var(--ok-bg); color: var(--ok); }
+  .status-pill.none { background: var(--none-bg); color: var(--ink-soft); }
+  .age-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 14px; }
+  .age-cell { text-align: center; padding: 8px 2px; border-radius: 10px; background: var(--none-bg); }
+  .age-cell .age-label { font-size: 10px; color: var(--ink-soft); margin-bottom: 3px; }
+  .age-cell .age-value { font-size: 14px; font-weight: 700; color: var(--none); }
+  .age-cell.open { background: var(--ok-bg); }
+  .age-cell.open .age-value { color: var(--ok); }
+  .facility-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 12px;
+    padding-top: 12px; border-top: 1px dashed var(--line); }
+  .facility-foot .updated { font-size: 11px; color: var(--ink-soft); }
+  .facility-foot .detail-link { font-size: 12px; font-weight: 700; color: var(--accent-deep); text-decoration: none; }
+  .foot-note { margin: 28px 20px 0; padding: 14px 16px; background: #FBF7EE; border: 1px solid #EFE2C4;
+    border-radius: 14px; font-size: 12px; line-height: 1.7; color: #7A6A3D; }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--ink-soft); font-size: 13px; }
 
+  .detail-overlay { position: fixed; inset: 0; background: rgba(17, 26, 23, 0.4); display: none;
+    align-items: flex-end; justify-content: center; z-index: 20; }
+  .detail-overlay.open { display: flex; }
+  .detail-sheet { width: 100%; max-width: 440px; max-height: 88vh; overflow-y: auto; background: var(--bg);
+    border-radius: 22px 22px 0 0; padding-bottom: 28px; animation: sheet-up 0.22s ease-out; position: relative; }
+  @keyframes sheet-up { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .sheet-handle-bar { display: flex; justify-content: center; padding: 10px 0 4px; }
+  .sheet-handle-bar span { width: 36px; height: 4px; border-radius: 2px; background: var(--line); }
+  .sheet-close { position: absolute; top: 14px; right: 16px; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--line); color: var(--ink-soft); font-size: 14px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .map-box { margin: 4px 20px 0; height: 180px; border-radius: 16px; position: relative; overflow: hidden;
+    background: linear-gradient(#E4EEE8, #E4EEE8) 0 0/100% 100%,
+      repeating-linear-gradient(0deg, transparent, transparent 21px, #D3E1D9 22px),
+      repeating-linear-gradient(90deg, transparent, transparent 21px, #D3E1D9 22px);
+    border: 1px solid var(--line); }
+  .map-box .road { position: absolute; background: #F4EFE1; }
+  .map-box .road.h { top: 46%; left: 0; right: 0; height: 14px; }
+  .map-box .road.v { left: 30%; top: 0; bottom: 0; width: 14px; }
+  .map-box .pin { position: absolute; top: 42%; left: 30%; transform: translate(-50%, -100%);
+    display: flex; flex-direction: column; align-items: center; }
+  .map-box .pin .head { width: 30px; height: 30px; border-radius: 50% 50% 50% 0; background: var(--full);
+    transform: rotate(-45deg); box-shadow: 0 6px 14px -6px rgba(0,0,0,0.35); display: flex;
+    align-items: center; justify-content: center; }
+  .map-box .pin .head .inner { width: 10px; height: 10px; border-radius: 50%; background: #fff; transform: rotate(45deg); }
+  .map-note { display: flex; justify-content: space-between; align-items: center; margin: 8px 20px 0;
+    font-size: 11px; color: var(--ink-soft); }
+  .map-note a { color: var(--accent-deep); font-weight: 700; text-decoration: none; }
+  .detail-header { padding: 44px 20px 0; }
+  .detail-header .facility-name { font-family: 'Zen Maru Gothic', sans-serif; font-size: 19px; }
+  .detail-body { padding: 18px 20px 0; }
+  .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .info-row .label { color: var(--ink-soft); }
+  .info-row .value { font-weight: 700; text-align: right; }
+  .detail-section-title { font-size: 13px; font-weight: 700; color: var(--ink-soft); margin: 18px 0 8px; }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <div class="hero">
+    <div class="hero-sun"></div>
+    <span class="badge"><span class="dot"></span><span id="updatedBadge">データ読み込み中...</span></span>
+    <h1 class="title">
+      今日、空いている<br>保育園がすぐわかる
+      <small>東京都内の空き状況を自治体データから毎月まとめています</small>
+    </h1>
+
+    <div class="search-card">
+      <div class="field-row">
+        <div class="field">
+          <label>エリア</label>
+          <select id="areaFilter">
+            <option value="">杉並区 全域</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>お子さまの年齢</label>
+          <select id="ageFilter">
+            <option value="">指定なし</option>
+            <option value="0">0歳</option>
+            <option value="1">1歳</option>
+            <option value="2">2歳</option>
+            <option value="3">3歳</option>
+            <option value="4">4歳</option>
+            <option value="5">5歳</option>
+          </select>
+        </div>
+      </div>
+      <button class="search-btn" onclick="applyFilters()">この条件で空きを探す</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2>杉並区の保育施設</h2>
+      <span class="count" id="resultCount">-件</span>
+    </div>
+
+    <div class="chips">
+      <div class="chip active" data-mode="all" onclick="setMode(this,'all')">すべて</div>
+      <div class="chip" data-mode="vacant" onclick="setMode(this,'vacant')">空きあり</div>
+    </div>
+
+    <div id="facilityList"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">条件に合う施設が見つかりませんでした。</div>
+  </div>
+
+  <div class="foot-note" id="sourceNote">
+    データの出典を読み込み中です。
+  </div>
+</div>
+
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetailOnBg(event)">
+  <div class="detail-sheet">
+    <div class="sheet-handle-bar"><span></span></div>
+    <div class="sheet-close" onclick="closeDetail()">✕</div>
+    <div class="map-box">
+      <div class="road h"></div>
+      <div class="road v"></div>
+      <div class="pin"><div class="head"><div class="inner"></div></div></div>
+    </div>
+    <div class="map-note">
+      <span>おおよその位置を表示</span>
+      <a href="#" id="dMapLink" target="_blank" rel="noopener">大きな地図で見る</a>
+    </div>
+    <div class="detail-header">
+      <div class="facility-name" id="dName">施設名</div>
+      <div class="facility-meta" id="dMeta">エリア ・ 区分</div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-section-title">年齢別の空き状況</div>
+      <div class="age-grid" id="dAgeGrid"></div>
+      <div class="detail-section-title">基本情報</div>
+      <div class="info-row"><span class="label">住所</span><span class="value" id="dAddress">-</span></div>
+      <div class="info-row"><span class="label">電話番号</span><span class="value" id="dPhone">-</span></div>
+      <div class="info-row"><span class="label">開所時間</span><span class="value" id="dHours">-</span></div>
+      <div class="info-row"><span class="label">定員</span><span class="value" id="dCapacity">-</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const AGE_LABELS = ['0', '1', '2', '3', '4', '5'];
+  let ALL_FACILITIES = [];
+  let currentMode = 'all';
+
+  async function loadData() {
+    try {
+      const res = await fetch('../data/suginami.json');
+      const data = await res.json();
+      ALL_FACILITIES = data.facilities || [];
+
+      document.getElementById('updatedBadge').textContent = `データ更新: ${data.updated_at}`;
+      document.getElementById('sourceNote').textContent =
+        `掲載データは「${data.source}」をもとにした参考値です。最新の空き状況は各施設・区役所へ直接お問い合わせください。`;
+
+      const areas = [...new Set(ALL_FACILITIES.map(f => f.area_name))];
+      const areaSelect = document.getElementById('areaFilter');
+      areas.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a; opt.textContent = a;
+        areaSelect.appendChild(opt);
+      });
+
+      render(ALL_FACILITIES);
+    } catch (e) {
+      document.getElementById('facilityList').innerHTML =
+        '<div class="empty-state">データの読み込みに失敗しました（data/suginami.json を確認してください）</div>';
+      console.error(e);
+    }
+  }
+
+  function setMode(el, mode) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    currentMode = mode;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const area = document.getElementById('areaFilter').value;
+    const age = document.getElementById('ageFilter').value;
+
+    let filtered = ALL_FACILITIES.filter(f => {
+      if (area && f.area_name !== area) return false;
+      if (age) {
+        const entry = f.vacancy_by_age[age];
+        if (!entry || !entry.vacancy) return false;
+      }
+      if (currentMode === 'vacant' && !f.has_vacancy) return false;
+      return true;
+    });
+
+    render(filtered);
+  }
+
+  function render(list) {
+    const container = document.getElementById('facilityList');
+    const empty = document.getElementById('emptyState');
+    document.getElementById('resultCount').textContent = `${list.length}件`;
+
+    if (list.length === 0) {
+      container.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    container.innerHTML = list.map((f, i) => `
+      <div class="facility" onclick='openDetailByIndex(${ALL_FACILITIES.indexOf(f)})'>
+        <div class="facility-top">
+          <div>
+            <div class="facility-name">${f.facility_name}</div>
+            <div class="facility-meta">${f.area_name} ・ ${f.facility_category}</div>
+          </div>
+          <div class="status-pill ${f.has_vacancy ? 'avail' : 'none'}">${f.has_vacancy ? '空きあり' : '満員'}</div>
+        </div>
+        <div class="age-grid">
+          ${AGE_LABELS.map(age => {
+            const entry = f.vacancy_by_age[age];
+            const hasEntry = !!entry;
+            const open = hasEntry && entry.vacancy > 0;
+            const value = hasEntry ? (open ? entry.vacancy : '−') : '−';
+            return `<div class="age-cell ${open ? 'open' : ''}">
+                      <div class="age-label">${age}歳</div>
+                      <div class="age-value">${value}</div>
+                    </div>`;
+          }).join('')}
+        </div>
+        <div class="facility-foot">
+          <span class="updated">定員 ${f.capacity_total ?? '-'}名</span>
+          <a class="detail-link" href="#" onclick="event.stopPropagation();">詳細を見る →</a>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function openDetailByIndex(index) {
+    const f = ALL_FACILITIES[index];
+    if (!f) return;
+
+    document.getElementById('dName').textContent = f.facility_name;
+    document.getElementById('dMeta').textContent = `${f.area_name} ・ ${f.facility_category}`;
+    document.getElementById('dAddress').textContent = f.address || '-';
+    document.getElementById('dPhone').textContent = f.phone || '-';
+    document.getElementById('dHours').textContent = f.hours || '-';
+    document.getElementById('dCapacity').textContent = f.capacity_total ? `${f.capacity_total}名` : '-';
+
+    if (f.latitude && f.longitude) {
+      document.getElementById('dMapLink').href =
+        `https://www.google.com/maps?q=${f.latitude},${f.longitude}`;
+    }
+
+    const grid = document.getElementById('dAgeGrid');
+    grid.innerHTML = AGE_LABELS.map(age => {
+      const entry = f.vacancy_by_age[age];
+      const hasEntry = !!entry;
+      const open = hasEntry && entry.vacancy > 0;
+      const value = hasEntry ? (open ? entry.vacancy : '−') : '−';
+      return `<div class="age-cell ${open ? 'open' : ''}">
+                <div class="age-label">${age}歳</div>
+                <div class="age-value">${value}</div>
+              </div>`;
+    }).join('');
+
+    document.getElementById('detailOverlay').classList.add('open');
+  }
+
+  function closeDetail() {
+    document.getElementById('detailOverlay').classList.remove('open');
+  }
+  function closeDetailOnBg(e) {
+    if (e.target.id === 'detailOverlay') closeDetail();
+  }
+
+  loadData();
+</script>
+</body>
+</html>
