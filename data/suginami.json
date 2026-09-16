@@ -1,1 +1,87 @@
-
+{
+  "updated_at": "2026-08-29",
+  "source": "杉並区オープンデータカタログ（CC-BY）※このファイルはサンプルデータです",
+  "facilities": [
+    {
+      "facility_code": "SAMPLE-001",
+      "facility_name": "みどりの森保育園 阿佐谷",
+      "facility_category": "認可保育園",
+      "area_name": "阿佐谷南 1丁目",
+      "address": "東京都杉並区阿佐谷南1丁目◯番◯号",
+      "phone": "03-3333-XXXX",
+      "hours": "7:15〜18:15",
+      "latitude": 35.6931,
+      "longitude": 139.6148,
+      "capacity_total": 90,
+      "vacancy_by_age": {
+        "0": {"capacity": 6, "vacancy": 0},
+        "1": {"capacity": 16, "vacancy": 2},
+        "2": {"capacity": 17, "vacancy": 1},
+        "3": {"capacity": 17, "vacancy": 0},
+        "4": {"capacity": 17, "vacancy": 0},
+        "5": {"capacity": 17, "vacancy": 0}
+      },
+      "has_vacancy": true
+    },
+    {
+      "facility_code": "SAMPLE-002",
+      "facility_name": "ひだまり保育園 高円寺",
+      "facility_category": "小規模保育",
+      "area_name": "高円寺北 3丁目",
+      "address": "東京都杉並区高円寺北3丁目◯番◯号",
+      "phone": "03-3333-YYYY",
+      "hours": "7:30〜18:30",
+      "latitude": 35.7062,
+      "longitude": 139.6493,
+      "capacity_total": 19,
+      "vacancy_by_age": {
+        "0": {"capacity": 3, "vacancy": 0},
+        "1": {"capacity": 8, "vacancy": 0},
+        "2": {"capacity": 8, "vacancy": 0}
+      },
+      "has_vacancy": false
+    },
+    {
+      "facility_code": "SAMPLE-003",
+      "facility_name": "そらまめ保育園 荻窪",
+      "facility_category": "認可保育園",
+      "area_name": "荻窪 5丁目",
+      "address": "東京都杉並区荻窪5丁目◯番◯号",
+      "phone": "03-3333-ZZZZ",
+      "hours": "7:15〜18:15",
+      "latitude": 35.7036,
+      "longitude": 139.6167,
+      "capacity_total": 60,
+      "vacancy_by_age": {
+        "0": {"capacity": 10, "vacancy": 3},
+        "1": {"capacity": 11, "vacancy": 0},
+        "2": {"capacity": 11, "vacancy": 0},
+        "3": {"capacity": 11, "vacancy": 1},
+        "4": {"capacity": 11, "vacancy": 0},
+        "5": {"capacity": 11, "vacancy": 0}
+      },
+      "has_vacancy": true
+    },
+    {
+      "facility_code": "SAMPLE-004",
+      "facility_name": "にじいろ保育園 西荻窪",
+      "facility_category": "認可保育園",
+      "area_name": "西荻南 2丁目",
+      "address": "東京都杉並区西荻南2丁目◯番◯号",
+      "phone": "03-3333-WWWW",
+      "hours": "7:15〜18:15",
+      "latitude": 35.7007,
+      "longitude": 139.5978,
+      "capacity_total": 80,
+      "vacancy_by_age": {
+        "0": {"capacity": 6, "vacancy": 0},
+        "1": {"capacity": 15, "vacancy": 0},
+        "2": {"capacity": 15, "vacancy": 0},
+        "3": {"capacity": 15, "vacancy": 0},
+        "4": {"capacity": 15, "vacancy": 0},
+        "5": {"capacity": 14, "vacancy": 0}
+      },
+      "has_vacancy": false
+    }
+  ]
+}
